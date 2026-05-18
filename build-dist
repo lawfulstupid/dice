@@ -1,6 +1,7 @@
 #!/bin/bash
 mkdir -p dist
-cp dice.py dist/dice.py
+cp dice.py dist
+cp README.md dist
 cp node_modules/pyodide/console-v2.html dist/index.html
 cp node_modules/pyodide/pyodide.mjs dist
 cp node_modules/pyodide/pyodide.mjs.map dist

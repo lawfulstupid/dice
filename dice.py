@@ -251,3 +251,12 @@ def uncurry(f):
 # Packs singleton values into a degenerate tuple
 def tuplise(t):
 	return t if isinstance(t, tuple) else (t,)
+
+# Utility
+class ShowStr:
+
+	def __init__(self, str):
+		self.str = str
+
+	def __repr__(self):
+		return self.str
