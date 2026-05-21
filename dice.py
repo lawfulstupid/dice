@@ -8,22 +8,31 @@ class Die:
 	# An integer n -> a standard n-sided die, e.g. d6 = Die(6)
 	# A dict -> a die with probability distribution equal to given dict
 	# A list -> a die that uniformly picks an item from the list
-	def __init__(self, arg):
-		if isinstance(arg, int):
-			self.pdf = dict.fromkeys(range(1, arg + 1), 1)
-		elif isinstance(arg, Die):
-			self.pdf = arg.pdf
-		elif isinstance(arg, dict):
+	def __new__(cls, arg):
+		self = super(Die, cls).__new__(cls)
+
+		if isinstance(arg, dict):
 			self.pdf = arg
+		elif isinstance(arg, Die):
+			return arg
+		elif isinstance(arg, int):
+			return Die(dict.fromkeys(range(1, arg + 1), 1))
 		elif isinstance(arg, list):
-			self.pdf = Die(len(arg)).map(lambda n: arg[n-1]).pdf
+			return Die(len(arg)).map(lambda n: arg[n-1])
 		else:
 			raise "unknown pdf type"
 
 		# Make sure PDF is good to use
 		if None in self.pdf:
 			del self.pdf[None]
+
 		self.totalWeight = sum(self.pdf.values())
+
+		# Flatten PDF if values are dice
+		if any(map(lambda val: isinstance(val, Die), self.values())):
+			return self.map(lambda x: x)
+		else:
+			return self
 
 	# A one-sided die that always rolls the given number
 	@staticmethod
@@ -207,6 +216,10 @@ class Die:
 
 	def __str__(self):
 		return reduce(lambda a,b: a.strip() + ", " + b.strip(), self.__lines())
+	
+	# To be usable as dict key
+	def __hash__(self):
+		return hash(frozenset(self.pdf))
 
 	def __lines(self):
 		longestValue = 0
@@ -244,6 +257,7 @@ d20 = Die(20)
 d100 = Die(100)
 dF = Die({-1: 2, 0: 2, 1: 2}) # FUDGE/FATE dice
 fate = dF.by(4) # FATE test roll
+char = Die({d4: 4, d6: 3, d8: 2, d10: 1}) # Blood & Sweat characteristic
 
 # Modifies a curried function to accept tuples
 def uncurry(f):
