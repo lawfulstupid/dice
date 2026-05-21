@@ -7,6 +7,7 @@ class Die:
 	# Creates a Die object from either
 	# An integer n -> a standard n-sided die, e.g. d6 = Die(6)
 	# A dict -> a die with probability distribution equal to given dict
+	# A list -> a die that uniformly picks an item from the list
 	def __init__(self, arg):
 		if isinstance(arg, int):
 			self.pdf = dict.fromkeys(range(1, arg + 1), 1)
@@ -14,6 +15,8 @@ class Die:
 			self.pdf = arg.pdf
 		elif isinstance(arg, dict):
 			self.pdf = arg
+		elif isinstance(arg, list):
+			self.pdf = Die(len(arg)).map(lambda n: arg[n-1]).pdf
 		else:
 			raise "unknown pdf type"
 
