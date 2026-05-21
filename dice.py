@@ -255,9 +255,17 @@ d10 = Die(10)
 d12 = Die(12)
 d20 = Die(20)
 d100 = Die(100)
-dF = Die({-1: 2, 0: 2, 1: 2}) # FUDGE/FATE dice
+dF = Die({ -1: 2, 0: 2, 1: 2 }) # FUDGE/FATE dice
 fate = dF.by(4) # FATE test roll
-char = Die({d4: 4, d6: 3, d8: 2, d10: 1}) # Blood & Sweat characteristic
+
+# Blood & Sweat
+char = Die({ d4: 4, d6: 3, d8: 2, d10: 1 }) # characteristic
+skill = Die({ 0: 8, 1: 6, 2: 5, 3: 4, 4: 3, 5: 2, 6: 1 }) # skill
+test = char + char + skill
+
+# Successes of a test vs DT
+def sl(roll, dt):
+	return roll - dt | 0;
 
 # Modifies a curried function to accept tuples
 def uncurry(f):
